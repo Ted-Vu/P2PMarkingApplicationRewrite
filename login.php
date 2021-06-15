@@ -7,13 +7,29 @@ if (isset($_COOKIE['auth'])) {
 $servername = "localhost";
 $username = "root";
 $password = "4658GB!rQb7yr_33";
-$conn = new mysqli($servername, $username, $password);
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-  }
-  echo "Connected successfully";
+}
 
+// $sql = "SELECT Password, isAdmin from users;";
 
+// $result = $conn->query($sql);
+
+// if ($result->num_rows > 0) {
+//     // output data of each row
+//     while($row = $result->fetch_assoc()) {
+//       echo "id: " . $row["isAdmin"]. "<br>";
+//     }
+//  } else {
+//    echo "0 results";
+//  }
+// $conn->close();
+$modal = '';
 if (isset($_SESSION['success']) && $_SESSION['success'] == true) {
     $modal = <<<EOT
     <div class="alert alert-success alert-dismissible fade show" role="alert" id="modal">
@@ -36,7 +52,54 @@ EOT;
     unset($_SESSION['reset']);
 }
 
+
+$pwdErr = '';
+$idErr = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (empty($_POST['id']) || empty($_POST['pwd'])) {
+        if (empty($_POST['id'])) {
+            $idErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
+        }
+        if (empty($_POST['pwd'])) {
+            $pwdErr = '<small class="form-text text-danger">Password cannot be empty.</small>';
+        }
+    } else {
+
+        $id = $_POST['id'];
+        $pwd = $_POST['pwd'];
+        
+        $sql = "SELECT Password, isAdmin from users;";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            // output data in each row
+            while($row = $result->fetch_assoc()) {
+                echo "id: " . $row["isAdmin"]. "<br>";
+                if($row['Password'] == $pwd){
+                    setcookie('auth', $id, time() + (86400 * 30), "/");
+                    if($row['isAdmin'] == 1){
+                        echo "Redirect to network admin page";
+                        // header("Location: ./networkadmin.php");
+
+                    }else{
+                        echo "Redirect to main page";
+                        // header("Location: ./main.php");
+                    }
+                }else{
+                    $pwdErr = '<small class="form-text text-danger">Password is incorrect.</small>';
+                }
+            }
+        } else {
+            $idErr = '<small class="form-text text-danger">User name does not exist</small>';
+        }
+        $conn->close();
+       
+    }
+}
+
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,14 +114,17 @@ EOT;
 </head>
 
 <body class="bg-light">
+    <?php echo $modal ?>
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
             <label for="id">ID</label>
             <input id="id" type="text" class="form-control" placeholder="Enter ID with 's'" name="id">
+            <?php echo $idErr ?>
         </div>
         <div class="form-group">
             <label for="pwd">Password</label>
             <input id="pwd" type="password" class="form-control" placeholder="Enter Password" name="pwd">
+            <?php echo $pwdErr ?>
         </div>
         <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>  
         <button type="button" onclick='openRegister();' class="btn btn-warning btn-lg btn-block">Sign Up</button>  
