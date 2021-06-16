@@ -1,5 +1,4 @@
 <?php
-require '../vendor/autoload.php';
 
 session_start();
 
@@ -7,31 +6,39 @@ if (empty($_COOKIE['auth'])) {
     header("Location: ./login.php");
 }
 
-use Google\Cloud\Datastore\DatastoreClient;
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$datastore = new DatastoreClient();
-$query = $datastore->query();
-$query->kind('team');
-$teams = $datastore->runQuery($query);
-
-$userKey = $datastore->key('user', $_COOKIE['auth']);
-$user = $datastore->lookup($userKey);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+   
     foreach ($_POST as $teamID => $score) {
-        $teamKey = $datastore->key('team', $teamID);
-        $currentTeam = $datastore->lookup($teamKey);
-        $currentTeam['totalScore'] = $currentTeam['totalScore'] + intval($score);
-        $currentTeam['numberOfVotes'] = $currentTeam['numberOfVotes'] + 1;
-        $datastore->update($currentTeam);
+        $sql = "SELECT * FROM team WHERE $teamID = {$teamID}";
+        
+        $result = $conn -> query($sql);
+        $row = $result->fetch_assoc();
+        $newScore = $row['totalScore'] + intval($score);
+        $sql = "UPDATE team SET totalScore = {$newScore} WHERE $teamID = '{$teamID}'; ";
+        $conn -> query($sql);
+        
+        $newVote = $row['numberOfVotes'] + 1;
+        $sql = "UPDATE team SET numberOfVotes = {$newVote} WHERE $teamID = '{$teamID}' ;";
+        $conn -> query($sql);
+    
     }
-    $user['vote'] = True;
-    $datastore->update($user);
+    // set voted
+    $email = $_COOKIE['auth'];
+    $sql = "UPDATE users SET voted = '1' WHERE email = '{$email}'; ";
+    $conn -> query($sql);
     unset($_COOKIE['auth']);
     setcookie('auth', null, -1, '/');
     $_SESSION['success'] = true;
     header("Location: ./login.php");
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -50,17 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="bg-light">
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST" onsubmit='return markValidation();'>
         <?php
-            foreach ($teams as $team) {
-                if ($team->key() != $user['teamID']) {
+
+            $sql = "SELECT teamName, teamID FROM team";
+            $result = $conn -> query($sql);
+
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
                     echo '<div class="form-group row">' . "\n";
-                        echo '<label class="col-md-2 col-form-label text-center">' . $team['teamName'] . '</label>' . "\n";
-                        echo '<div class="col-md-10">' . "\n";
-                            echo '<input name=' . $team->key()->pathEndIdentifier() . ' type="text" class="form-control" placeholder="Score 1-10"/>' . "\n";
-                            echo '<div id=' . $team->key()->pathEndIdentifier() . '>'.'</div>';
-                        echo '</div>' . "\n";
+                    echo '<label class="col-md-2 col-form-label text-center">' . $row['teamName'] . '</label>' . "\n";
+                    echo '<div class="col-md-10">' . "\n";
+                        echo '<input name=' . $row['teamID']. ' type="text" class="form-control" placeholder="Score 1-10"/>' . "\n";
+                        echo '<div id=' . $row['teamID'] . '>'.'</div>';
                     echo '</div>' . "\n";
+                echo '</div>' . "\n";
                 }
             }
+            $conn -> close();
+
         ?>
         <div class="form-group row">
             <div class="col-md-2"></div>
