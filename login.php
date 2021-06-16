@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_POST['email'];
         $pwd = $_POST['pwd'];
         
-        $sql = "SELECT email, Password, isAdmin from users;";
+        $sql = "SELECT email, Password, isAdmin, userID from users;";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -76,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             while($row = $result->fetch_assoc()) {
                 if($row['email'] == $email && $row['Password'] == $pwd){
                     setcookie('auth', $email, time() + (86400 * 30), "/");
+                    setcookie('userid', $row['userID'], time() + (86400 * 30),"/");
                     if($row['isAdmin'] == 1){
                         header("Location: ./networkadmin.php");
                     }else{

@@ -31,6 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $sql = "INSERT INTO users (email, LastName, FirstName, Password, isAdmin, voted)
             VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0, 0); ";            
             $conn->query($sql);
+
+            $sql = "SELECT AUTO_INCREMENT
+            FROM information_schema.TABLES
+            WHERE TABLE_SCHEMA = 'p2pmarking'
+            AND TABLE_NAME = 'users';";
+            $result = $conn -> query($sql);
+            $row = $result -> fetch_assoc();
+            
+            if(!empty($_POST['teamname'])){
+                $sql = "INSERT INTO team (teamName, , numberOfVotes, totalScore) VALUES('{$_POST['teamname']}', ,0,0)";
+            }
             $conn -> close();
             
             $modal = <<<EOT
@@ -65,6 +76,9 @@ EOT;
     <title>P2P Marking System</title>
     <link rel="shortcut icon" href="favicon.svg">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src='script.js'></script>
 </head>
 
@@ -90,8 +104,14 @@ EOT;
             <label for="pwd">Password</label>
             <input id="pwd" type="password" class="form-control" placeholder="Enter Password" name="pwd">
         </div>
+        <div class="form-group">
+            <label for="teamname">Team Name</label>
+            <input id="teamname" type="teamname" class="form-control" placeholder="Enter Team Name - Leave blank if you register individually" name="teamname">
+        </div> 
         <button type="submit" class="btn btn-primary btn-lg btn-block">Sign Up</button>  
     </form>
+
+    
 </body>
 
 </html>

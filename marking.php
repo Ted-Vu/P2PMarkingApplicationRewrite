@@ -58,22 +58,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST" onsubmit='return markValidation();'>
         <?php
 
-            $sql = "SELECT teamName, teamID FROM team";
+            $sql = "SELECT teamName, teamID, userID FROM team";
             $result = $conn -> query($sql);
 
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
+                  if($_COOKIE['userid'] != $row['userID'])  {
                     echo '<div class="form-group row">' . "\n";
-                    echo '<label class="col-md-2 col-form-label text-center">' . $row['teamName'] . '</label>' . "\n";
-                    echo '<div class="col-md-10">' . "\n";
-                        echo '<input name=' . $row['teamID']. ' type="text" class="form-control" placeholder="Score 1-10"/>' . "\n";
-                        echo '<div id=' . $row['teamID'] . '>'.'</div>';
+                        echo '<label class="col-md-2 col-form-label text-center">' . $row['teamName'] . '</label>' . "\n";
+                        echo '<div class="col-md-10">' . "\n";
+                            echo '<input name=' . $row['teamID']. ' type="text" class="form-control" placeholder="Score 1-10"/>' . "\n";
+                            echo '<div id=' . $row['teamID'] . '>'.'</div>';
+                        echo '</div>' . "\n";
                     echo '</div>' . "\n";
-                echo '</div>' . "\n";
+                  }
                 }
             }
             $conn -> close();
-
         ?>
         <div class="form-group row">
             <div class="col-md-2"></div>
