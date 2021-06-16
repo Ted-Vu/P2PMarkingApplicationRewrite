@@ -54,28 +54,27 @@ EOT;
 
 
 $pwdErr = '';
-$idErr = '';
+$emailErr = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($_POST['id']) || empty($_POST['pwd'])) {
         if (empty($_POST['id'])) {
-            $idErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
+            $emailErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
         }
         if (empty($_POST['pwd'])) {
             $pwdErr = '<small class="form-text text-danger">Password cannot be empty.</small>';
         }
     } else {
 
-        $id = $_POST['id'];
+        $email = $_POST['email'];
         $pwd = $_POST['pwd'];
         
-        $sql = "SELECT Password, isAdmin from users;";
+        $sql = "SELECT email, Password, isAdmin from users;";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             // output data in each row
             while($row = $result->fetch_assoc()) {
-                echo "id: " . $row["isAdmin"]. "<br>";
-                if($row['Password'] == $pwd){
+                if($row['email'] == $email && $row['Password'] == $pwd){
                     setcookie('auth', $id, time() + (86400 * 30), "/");
                     if($row['isAdmin'] == 1){
                         echo "Redirect to network admin page";
@@ -85,7 +84,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         echo "Redirect to main page";
                         // header("Location: ./main.php");
                     }
-                }else{
+                }else if($row['email'] != $email){
+                    $emailErr = '<small class="form-text text-danger">You have not registered yet.</small>';
+                }else if($row['Password'] != $pwd){
                     $pwdErr = '<small class="form-text text-danger">Password is incorrect.</small>';
                 }
             }
@@ -117,9 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php echo $modal ?>
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
-            <label for="id">ID</label>
-            <input id="id" type="text" class="form-control" placeholder="Enter ID with 's'" name="id">
-            <?php echo $idErr ?>
+            <label for="id">Email</label>
+            <input id="email" type="text" class="form-control" placeholder="Enter email" name="email">
+            <?php echo $emailErr ?>
         </div>
         <div class="form-group">
             <label for="pwd">Password</label>

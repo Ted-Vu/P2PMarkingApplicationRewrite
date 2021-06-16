@@ -1,5 +1,4 @@
 <?php
-require '../vendor/autoload.php';
 
 session_start();
 
@@ -8,9 +7,13 @@ if (empty($_COOKIE['auth'])) {
 }
 
 //constructing array from gcp here
-use Google\Cloud\Datastore\DatastoreClient;
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$datastore = new DatastoreClient();
+
 
 $teamName = array();
 $score = array();

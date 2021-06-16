@@ -1,42 +1,40 @@
 <?php
-require '../vendor/autoload.php';
 
-# Create connection to gcloud datastore (NoSQL db) 
-use Google\Cloud\Datastore\DatastoreClient;
-
-$datastore = new DatastoreClient();
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 $pwdErr = '';
 $idErr = '';
 $nameRegex= "/^[A-Za-z .\-']{1,50}$/";
 $nameErr='';
+$emailErr = '';
+$modal = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (empty($_POST['id']) || empty($_POST['pwd'])||empty($_POST['name'])) {
-        if (empty($_POST['id'])) {
-            $idErr = '<small class="form-text text-danger">ID cannot be empty.</small>';
-        }
+    if (empty($_POST['pwd'])||empty($_POST['firstname'])||empty($_POST['lastname'])) {
         if (empty($_POST['pwd'])) {
             $pwdErr = '<small class="form-text text-danger">Password cannot be empty.</small>';
         }
-        if (empty($_POST['name'])) {
+        if (empty($_POST['firstname']) || empty($_POST['lastname'])) {
             $nameErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
         }
+
     } else {
-        $id = $_POST['id'];
-        $Name=$_POST['name'];
-        if (is_numeric($_POST['pwd'])&&preg_match($nameRegex,$Name)) {
-            $pwd = intval($_POST['pwd']);
-            $key=$datastore->key('user',$id);
+        $FName=$_POST['firstname'];
+        $LName = $_POST['lastname'];
 
-            $entity=$datastore->entity($key,['password'=>$pwd]);
-            $entity['name']=$Name;
-            $entity['vote']=false;
-            $entity['admin']=false;
+        if (preg_match($nameRegex,$FName) && preg_match($nameRegex, $LName) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
-            $transaction=$datastore->transaction();
-            $transaction->insert($entity);
-            $transaction->commit();
+            $pwd = $_POST['pwd'];
+            $email = $_POST['email'];
+            $sql = "INSERT INTO users (email, LastName, FirstName, Password, isAdmin)
+            VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0); ";            
+            $conn->query($sql);
+            $conn -> close();
+            
             $modal = <<<EOT
              <div class="alert alert-success alert-dismissible fade show" role="alert" id="modal">
                 <h4 class="alert-heading text-center">Register Successfully</h4>
@@ -72,14 +70,19 @@ EOT;
     <?php echo $modal ?>
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
-            <label for="name">Name</label>
-            <input id="name" type="text" class="form-control" placeholder="Enter your name" name="name">
+            <label for="email">Email</label>
+            <input id="email" type="text" class="form-control" placeholder="Enter your email" name="email">
+            <?php echo $emailErr ?>
+        </div>
+        <div class="form-group">
+            <label for="firstname">First Name</label>
+            <input id="firstname" type="text" class="form-control" placeholder="Enter your First Name" name="firstname">
             <?php echo $nameErr ?>
         </div>
         <div class="form-group">
-            <label for="id">ID</label>
-            <input id="id" type="text" class="form-control" placeholder="Enter ID" name="id">
-            <?php echo $idErr ?>
+            <label for="lastname">Last Name</label>
+            <input id="lastname" type="text" class="form-control" placeholder="Enter your Last Name" name="lastname">
+            <?php echo $nameErr ?>
         </div>
         <div class="form-group">
             <label for="pwd">Password</label>
