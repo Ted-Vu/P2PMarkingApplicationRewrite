@@ -15,21 +15,21 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 
 
+
 $teamName = array();
 $score = array();
 
-$query = $datastore->query();
-$query->kind('team');
-$queryUser = $datastore->query();
-$queryUser->kind('user');
 
-$teams = $datastore->runQuery($query);
-foreach ($teams as $team) {
-    array_push($teamName, $team['teamName']);
-    if ($team['numberOfVotes'] != 0) {
-        array_push($score,  round($team['totalScore'] / $team['numberOfVotes'],2));
+$sql = "SELECT * FROM p2pmarking.team;";
+$result = $conn->query($sql);
+while($row = $result->fetch_assoc()) {
+
+    array_push($teamName, $row['teamName']);
+    if ($row['numberOfVotes'] != 0) {
+        array_push($score,  round($row['totalScore'] / $row['numberOfVotes'],2));
     }
 }
+
 $jsTeamNameArray = json_encode($teamName);
 $jsScoreArray = json_encode($score);
 
@@ -39,17 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         setcookie('auth', null, -1, '/');
         header("Location: ./login.php");
     } else if (isset($_POST['reset'])) {
-        $teams = $datastore->runQuery($query);
-        foreach ($teams as $team) {
-            $team['numberOfVotes'] = 0;
-            $team['totalScore'] = 0;
-            $datastore->update($team);
-        }
-        $users = $datastore->runQuery($queryUser);
-        foreach ($users as $user) {
-            $user['vote'] = False;
-            $datastore->update($user);
-        }
+
+        $sql = "UPDATE team SET numberOfVotes = 0, totalScore = 0;";
+        $conn->query($sql);
+        $sql = "UPDATE user SET voted = 0";
+        $conn->query($sql);
         unset($_COOKIE['auth']);
         setcookie('auth', null, -1, '/');
         $_SESSION['reset'] = true;
