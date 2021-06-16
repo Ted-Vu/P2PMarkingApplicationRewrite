@@ -21,7 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $lastname = $_POST['lastname'];
 
         $sql = "UPDATE `p2pmarking`.`users` SET `FirstName` = '{$firstname}' WHERE (`email` = '{$email}');";
+        $conn -> query($sql);
+
         $sql = "UPDATE `p2pmarking`.`users` SET `LastName` = '{$lastname}' WHERE (`email` = '{$email}');";
+        $conn -> query($sql);
+
+        $conn ->close();
         header("Location: ./main.php");
     }
 }

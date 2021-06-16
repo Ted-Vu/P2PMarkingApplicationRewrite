@@ -1,27 +1,30 @@
 <?php
-require '../vendor/autoload.php';
 if (empty($_COOKIE['auth'])) {
     header("Location: ./login.php");
 }
 
 # Create connection to gcloud datastore (NoSQL db) 
-use Google\Cloud\Datastore\DatastoreClient;
-
-$datastore = new DatastoreClient();
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 $err = '';
-$id = $_COOKIE['auth'];
+$email = $_COOKIE['auth'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (empty($_POST['pwd']) || empty($_POST['opwd'])) {
+    if (empty($_POST['newpwd']) || empty($_POST['oldpwd'])) {
         $err = '<small class="form-text text-danger">New Password and Old Password cannot be empty.</small>';
     } else {
-        $key = $datastore->key('user', $id);
-        $pwd = intval($_POST['opwd']);
-        $user = $datastore->lookup($key);
-        if ($user['password'] == $pwd) {
-            $user->setProperty('password', $_POST['pwd']);
-            $datastore->update($user);
+        $sql = "SELECT * from users WHERE email = '{$email}' and Password = '{$_POST['oldpwd']}'";
+        $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $sql = "UPDATE `p2pmarking`.`users` SET `Password` = '{$_POST['newpwd']}' WHERE (`email` = '{$email}');";
+            echo $sql;
+            $conn -> query($sql);
+            $conn -> close();
             header("Location: ./main.php");
         } else {
             $err = '<small class="form-text text-danger">Old Password is wrong.</small>';
@@ -44,13 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="bg-light">
     <form action="./password.php" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
-            <label for="opwd">Old Password</label>
-            <input id="opwd" type="text" class="form-control" placeholder="Enter old Password" name="opwd">
+            <label for="oldpwd">Old Password</label>
+            <input id="oldpwd" type="text" class="form-control" placeholder="Enter old Password" name="oldpwd">
             <?php echo $err ?>
         </div>
         <div class="form-group">
-            <label for="pwd">New Password</label>
-            <input id="pwd" type="text" class="form-control" placeholder="Enter new Password" name="pwd">
+            <label for="newpwd">New Password</label>
+            <input id="newpwd" type="text" class="form-control" placeholder="Enter new Password" name="newpwd">
             <?php echo $err ?>
         </div>
         <button type="submit" class="btn btn-danger btn-lg btn-block">Change</button>
