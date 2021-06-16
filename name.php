@@ -1,25 +1,27 @@
 <?php
-require '../vendor/autoload.php';
 if (empty($_COOKIE['auth'])) {
     header("Location: ./login.php");
 }
 
 # Create connection to gcloud datastore (NoSQL db) 
-use Google\Cloud\Datastore\DatastoreClient;
-
-$datastore = new DatastoreClient();
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 $err = '';
-$id = $_COOKIE['auth'];
+$email = $_COOKIE['auth'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (empty($_POST['name'])) {
+    if (empty($_POST['firstname']) || empty($_POST['lastname'])) {
         $err = '<small class="form-text text-danger">Name cannot be empty.</small>';
     } else {
-        $key = $datastore->key('user', $id);
-        $user = $datastore->lookup($key);
-        $user->setProperty('name', $_POST['name']);
-        $datastore->update($user);
+        $firstname = $_POST['firstname'];
+        $lastname = $_POST['lastname'];
+
+        $sql = "UPDATE `p2pmarking`.`users` SET `FirstName` = '{$firstname}' WHERE (`email` = '{$email}');";
+        $sql = "UPDATE `p2pmarking`.`users` SET `LastName` = '{$lastname}' WHERE (`email` = '{$email}');";
         header("Location: ./main.php");
     }
 }
@@ -40,9 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="bg-light">
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
-            <label for="name">New Name</label>
-            <input id="name" type="text" class="form-control" placeholder="Enter new Name" name="name">
+            <label for="name">New First Name</label>
+            <input id="firstname" type="text" class="form-control" placeholder="Enter new First Name" name="firstname">
             <?php echo $err ?>
+            
+        </div>
+        <div class="form-group">
+            <label for="lastname">New Last Name</label>
+            <input id="lastname" type="text" class="form-control" placeholder="Enter new Last Name" name="lastname">
+            <?php echo $err ?>  
         </div>
         <button type="submit" class="btn btn-danger btn-lg btn-block">Change</button>
     </form>
