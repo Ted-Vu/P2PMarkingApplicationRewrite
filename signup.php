@@ -6,7 +6,6 @@ $password = "4658GB!rQb7yr_33";
 $dbname = "p2pmarking";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-$pwdErr = '';
 $idErr = '';
 $nameRegex= "/^[A-Za-z .\-']{1,50}$/";
 $nameErr='';
@@ -21,17 +20,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($_POST['firstname']) || empty($_POST['lastname'])) {
             $nameErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
         }
-
     } else {
         $FName=$_POST['firstname'];
         $LName = $_POST['lastname'];
-
+        $email = $_POST['email'];
         if (preg_match($nameRegex,$FName) && preg_match($nameRegex, $LName) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
             $pwd = $_POST['pwd'];
             $email = $_POST['email'];
-            $sql = "INSERT INTO users (email, LastName, FirstName, Password, isAdmin)
-            VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0); ";            
+            $sql = "INSERT INTO users (email, LastName, FirstName, Password, isAdmin, voted)
+            VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0, 0); ";            
             $conn->query($sql);
             $conn -> close();
             
@@ -44,10 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
 EOT;
             unset($_POST);
-        } else if(!is_numeric($_POST['pwd'])) {
-            $pwdErr = '<small class="form-text text-danger">In this software release password is your student number without "s".</small>';
-        }else if(!preg_match($nameRegex,$Name)){
-            $nameErr='<small class="form-text text-danger">Incorrect name format</small>';
+        }else {
+            if(!preg_match($nameRegex,$FName) || !preg_match($nameRegex, $LName)){
+                $nameErr='<small class="form-text text-danger">Incorrect name format</small>';
+            }
+
+            if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+                $emailErr = '<small class="form-text text-danger">Incorrect email format</small>';
+            }
         }
     }
 }
@@ -87,7 +89,6 @@ EOT;
         <div class="form-group">
             <label for="pwd">Password</label>
             <input id="pwd" type="password" class="form-control" placeholder="Enter Password" name="pwd">
-            <?php echo $pwdErr ?>
         </div>
         <button type="submit" class="btn btn-primary btn-lg btn-block">Sign Up</button>  
     </form>

@@ -1,23 +1,31 @@
 <?php
-require '../vendor/autoload.php';
 if (empty($_COOKIE['auth'])) {
     header("Location: ./login.php");
 }
-# Create connection to gcloud datastore (NoSQL db) 
-use Google\Cloud\Datastore\DatastoreClient;
 
-$datastore = new DatastoreClient();
+$servername = "localhost";
+$username = "root";
+$password = "4658GB!rQb7yr_33";
+$dbname = "p2pmarking";
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-$id = $_COOKIE['auth'];
-$key = $datastore->key('user', $id);
-$user = $datastore->lookup($key);
-$name = $user['name'];
+$email = $_COOKIE['auth'];
 
-if ($user['admin'] == true) {
+
+$sql = "SELECT LastName, FirstName, isAdmin, voted from users WHERE email = '{$email}';";
+$result = $conn->query($sql);
+$row = $result->fetch_assoc();
+
+
+$name = $row['FirstName'] .' '. $row['LastName'];
+$isAdmin = $row['isAdmin'];
+$voted = $row['voted'];
+
+if ($isAdmin == true) {
     header("Location: ./networkadmin.php");
 }
 
-if ($user['vote'] == False) {
+if ($voted == false) {
     $noti = "<hr class='my-4'><p class='font-weight-bold'>Please vote now</p>";
     $disabled = "";
 } else {

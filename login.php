@@ -56,9 +56,9 @@ EOT;
 $pwdErr = '';
 $emailErr = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (empty($_POST['id']) || empty($_POST['pwd'])) {
-        if (empty($_POST['id'])) {
-            $emailErr = '<small class="form-text text-danger">Name cannot be empty.</small>';
+    if (empty($_POST['email']) || empty($_POST['pwd'])) {
+        if (empty($_POST['email'])) {
+            $emailErr = '<small class="form-text text-danger">Email cannot be empty.</small>';
         }
         if (empty($_POST['pwd'])) {
             $pwdErr = '<small class="form-text text-danger">Password cannot be empty.</small>';
@@ -75,14 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // output data in each row
             while($row = $result->fetch_assoc()) {
                 if($row['email'] == $email && $row['Password'] == $pwd){
-                    setcookie('auth', $id, time() + (86400 * 30), "/");
+                    setcookie('auth', $email, time() + (86400 * 30), "/");
                     if($row['isAdmin'] == 1){
-                        echo "Redirect to network admin page";
-                        // header("Location: ./networkadmin.php");
-
+                        header("Location: ./networkadmin.php");
                     }else{
-                        echo "Redirect to main page";
-                        // header("Location: ./main.php");
+                        header("Location: ./main.php");
                     }
                 }else if($row['email'] != $email){
                     $emailErr = '<small class="form-text text-danger">You have not registered yet.</small>';
@@ -118,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php echo $modal ?>
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST">
         <div class="form-group">
-            <label for="id">Email</label>
+            <label for="email">Email</label>
             <input id="email" type="text" class="form-control" placeholder="Enter email" name="email">
             <?php echo $emailErr ?>
         </div>
