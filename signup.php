@@ -28,20 +28,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $pwd = $_POST['pwd'];
             $email = $_POST['email'];
+            $teamName = $_POST['teamname'];
+            
             $sql = "INSERT INTO users (email, LastName, FirstName, Password, isAdmin, voted)
-            VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0, 0); ";            
+            VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0, 0); ";     
+            
+           
+
+
             $conn->query($sql);
 
-            $sql = "SELECT AUTO_INCREMENT as UserID
-            FROM information_schema.TABLES
-            WHERE TABLE_SCHEMA = 'p2pmarking'
-            AND TABLE_NAME = 'users';";
-            $result = $conn -> query($sql);
-            $row = $result -> fetch_assoc();
-            $userID = $row['UserID'];
-            if(!empty($_POST['teamname'])){
-                $sql = "INSERT INTO team (teamName, , numberOfVotes, totalScore) VALUES('{$_POST['teamname']}', ,0,0)";
+            
+            $sql = "SELECT * FROM users;";
+            $conn->query($sql);
+            $userID = $conn -> query($sql) -> num_rows;
+            if(empty($_POST['teamname'])){
+                $sql = "INSERT INTO team (teamName, userID, totalScore, numberOfVote) VALUES('INDIVIDUAL',{$userID},0,0);";
+                $conn -> query($sql);
             }
+            $sql = "SELECT teamID, userID, totalScore, numberOfVotes from team WHERE teamName = '{$teamName}'";
+
+            $result = $conn->query($sql);
+            if($result != false && $result->num_rows > 0){
+                $teamID = $row['teamID'];
+
+                $sql = "INSERT INTO team (teamID, teamName, userID, totalScore, numberOfVote) VALUES({$row['teamID']}, '{$teamName}',{$userID},{$row['totalScore']},{$row['numberOfVotes']}";
+                $conn -> query($sql);
+            }else{
+                // first person in a team registers
+                $sql = "INSERT INTO team (teamName, userID, totalScore, numberOfVote) VALUES('{$teamName}',{$userID},0,0";
+                $conn -> query($sql);
+            }
+            
             $conn -> close();
             
             $modal = <<<EOT
