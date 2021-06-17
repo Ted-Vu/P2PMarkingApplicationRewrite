@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             VALUES ('{$email}','{$LName}', '{$FName}', '{$pwd}',0, 0); ";            
             $conn->query($sql);
 
-            $sql = "SELECT AUTO_INCREMENT
+            $sql = "SELECT AUTO_INCREMENT as UserID
             FROM information_schema.TABLES
             WHERE TABLE_SCHEMA = 'p2pmarking'
             AND TABLE_NAME = 'users';";
             $result = $conn -> query($sql);
             $row = $result -> fetch_assoc();
-            
+            $userID = $row['UserID'];
             if(!empty($_POST['teamname'])){
                 $sql = "INSERT INTO team (teamName, , numberOfVotes, totalScore) VALUES('{$_POST['teamname']}', ,0,0)";
             }
