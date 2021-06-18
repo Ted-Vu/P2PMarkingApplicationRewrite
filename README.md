@@ -1,13 +1,21 @@
-# P2PMarkingApplicationRewrite
+# [P2PMarkingApplicationRewrite](https://markyourpeers.com)
 Ted Vu 2021
 
 © Ted Vu 2021. Disclaimer: This repo is an asset of Ted Vu.
 
+## Access
+
+The project can be accessed from this url:
+
+https://markyourpeers.com
+
+You can register an account as a normal user. To register an account as a admin please reach out to Ted Vu at tedvu184@gmail.com
+
 ## Developer
 
-The original project was developed using Google Cloud and NoSQL by **Kevin Vu** and Ted Vu.
+The original project was developed using Google Cloud and NoSQL by **[Kevin Vu](https://github.com/kevinvu184)** and [Ted Vu](https://github.com/Ted-Vu).
 
-This ported version is written by **Ted Vu** using MySQL. 
+This ported version was written by **Ted Vu** using MySQL. 
 
 ## Project scenario
 
@@ -29,4 +37,23 @@ Ok how about students marking each other's work, that sounds like a great soluti
 
 - See the mark for demoed team.
 - Reset Database for the next demo session.
+
+## Project stacks:
+
+LA(N)MP Stack - Linux / Nginx / MySQL / PHP
+
+Front end:
+
+- HTML/CSS/JS
+
+Back end:
+
+- PHP
+- MySQL
+
+## Ted Vu Open Sources Philosophy
+
+Free software as in free speech and free beer, all projects of Ted Vu is welcoming for ported version and pull requests. Please feel free to modify and study the source code.
+
+
 
