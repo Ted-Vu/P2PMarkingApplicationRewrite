@@ -3,7 +3,7 @@ Ted Vu 2021
 
 © Ted Vu 2021. 
 
-If you wish to contribute please read my  on Open Source projects.
+If you wish to contribute please read [my philosophy](https://www.tedvu.com/blog/ted-vu-philosphy-on-open-source) on Open Source projects.
 
 ## Disclaimer:
 
@@ -56,10 +56,6 @@ Back end:
 
 - PHP
 - MySQL
-
-## Ted Vu Open Sources Philosophy
-
-Here's a link to my [open source philosophy](https://www.tedvu.com/blog/ted-vu-philosphy-on-open-source)
 
 
 
