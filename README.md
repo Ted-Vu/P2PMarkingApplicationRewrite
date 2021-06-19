@@ -3,6 +3,10 @@ Ted Vu 2021
 
 © Ted Vu 2021. Disclaimer: This repo is an asset of Ted Vu.
 
+## Disclaimer:
+
+Please note that the project is currently under active development by Ted Vu, many bugs have not been resolved yet. 
+
 ## Access
 
 The project can be accessed from this url:
