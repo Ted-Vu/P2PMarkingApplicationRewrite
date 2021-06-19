@@ -1,7 +1,9 @@
 # [P2PMarkingApplicationRewrite](https://markyourpeers.com)
 Ted Vu 2021
 
-© Ted Vu 2021. Disclaimer: This repo is an asset of Ted Vu.
+© Ted Vu 2021. 
+
+If you wish to contribute please read my  on Open Source projects.
 
 ## Disclaimer:
 
@@ -57,7 +59,7 @@ Back end:
 
 ## Ted Vu Open Sources Philosophy
 
-Free software as in free speech and free beer, all projects of Ted Vu is welcoming for ported version and pull requests. Please feel free to modify and study the source code.
+Here's a link to my [open source philosophy](https://www.tedvu.com/blog/ted-vu-philosphy-on-open-source)
 
 
 
