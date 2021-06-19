@@ -21,11 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = $conn -> query($sql);
         $row = $result->fetch_assoc();
         $newScore = $row['totalScore'] + intval($score);
-        $sql = "UPDATE team SET totalScore = {$newScore} WHERE $teamID = '{$teamID}'; ";
+        $sql = "UPDATE teams SET totalScore = {$newScore} WHERE $teamID = '{$teamID}'; ";
         $conn -> query($sql);
         
         $newVote = $row['numberOfVotes'] + 1;
-        $sql = "UPDATE team SET numberOfVotes = {$newVote} WHERE $teamID = '{$teamID}' ;";
+        $sql = "UPDATE teams SET numberOfVotes = {$newVote} WHERE $teamID = '{$teamID}' ;";
         $conn -> query($sql);
     
     }
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form action="#" class="container-sm py-4 my-5 bg-dark text-white rounded-lg" method="POST" onsubmit='return markValidation();'>
         <?php
 
-            $sql = "SELECT teamName, teamID, userID FROM team";
+            $sql = "SELECT teamName, teamID, userID FROM teams";
             $result = $conn -> query($sql);
 
             if ($result->num_rows > 0) {

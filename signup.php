@@ -43,20 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $conn->query($sql);
             $userID = $conn -> query($sql) -> num_rows;
             if(empty($_POST['teamname'])){
-                $sql = "INSERT INTO team (teamName, userID, totalScore, numberOfVote) VALUES('INDIVIDUAL',{$userID},0,0);";
+                $sql = "INSERT INTO teams (teamName, userID, totalScore, numberOfVote) VALUES('INDIVIDUAL',{$userID},0,0);";
                 $conn -> query($sql);
             }
-            $sql = "SELECT teamID, userID, totalScore, numberOfVotes from team WHERE teamName = '{$teamName}'";
+            $sql = "SELECT teamID, userID, totalScore, numberOfVotes from teams WHERE teamName = '{$teamName}'";
 
             $result = $conn->query($sql);
             if($result != false && $result->num_rows > 0){
                 $teamID = $row['teamID'];
 
-                $sql = "INSERT INTO team (teamID, teamName, userID, totalScore, numberOfVote) VALUES({$row['teamID']}, '{$teamName}',{$userID},{$row['totalScore']},{$row['numberOfVotes']}";
+                $sql = "INSERT INTO teams (teamID, teamName, userID, totalScore, numberOfVote) VALUES({$row['teamID']}, '{$teamName}',{$userID},{$row['totalScore']},{$row['numberOfVotes']}";
                 $conn -> query($sql);
             }else{
                 // first person in a team registers
-                $sql = "INSERT INTO team (teamName, userID, totalScore, numberOfVote) VALUES('{$teamName}',{$userID},0,0";
+                $sql = "INSERT INTO teams (teamName, userID, totalScore, numberOfVote) VALUES('{$teamName}',{$userID},0,0";
                 $conn -> query($sql);
             }
             

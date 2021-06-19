@@ -20,13 +20,14 @@ $teamName = array();
 $score = array();
 
 
-$sql = "SELECT * FROM p2pmarking.team;";
+$sql = "SELECT * FROM p2pmarking.teams;";
 $result = $conn->query($sql);
 while($row = $result->fetch_assoc()) {
 
     array_push($teamName, $row['teamName']);
-    if ($row['numberOfVotes'] != 0) {
-        array_push($score,  round($row['totalScore'] / $row['numberOfVotes'],2));
+    $currentTeamScore = intval($row['numberOfVote']);
+    if ($currentTeamScore !== 0) {
+        array_push($score,  round($row['totalScore'] / $currentTeamScore,2));
     }
 }
 
@@ -40,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ./login.php");
     } else if (isset($_POST['reset'])) {
 
-        $sql = "UPDATE team SET numberOfVotes = 0, totalScore = 0;";
+        $sql = "UPDATE teams SET numberOfVote = 0, totalScore = 0;";
         $conn->query($sql);
-        $sql = "UPDATE user SET voted = 0";
+        $sql = "UPDATE users SET voted = 0";
         $conn->query($sql);
         unset($_COOKIE['auth']);
         setcookie('auth', null, -1, '/');
