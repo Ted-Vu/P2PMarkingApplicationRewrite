@@ -46,7 +46,7 @@ Ok how about students marking each other's work, that sounds like a great soluti
 
 ## Project stacks:
 
-LA(N)MP Stack - Linux / Nginx / MySQL / PHP
+LEMP Stack - Linux / Nginx / MySQL / PHP
 
 Front end:
 
